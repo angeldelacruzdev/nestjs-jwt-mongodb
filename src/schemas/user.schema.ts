@@ -15,6 +15,9 @@ export class User {
   password: string;
 
   @Prop()
+  roles: string[];
+
+  @Prop()
   hash: string;
 
   @Prop()
