@@ -2,8 +2,9 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from './../users/users.service';
-import { AuthDto, CreateUserDto } from './../dto';
+
 import { Tokens } from './../types';
+import { AuthDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
 
     if (!passwordMatches) throw new ForbiddenException('Access Denied.');
 
-    const tokens = await this.getTokens(user._id, user.email);
+    const tokens = await this.getTokens(user);
 
     const rtHash = await this.hashPassword(tokens.refresh_token);
 
@@ -45,7 +46,7 @@ export class AuthService {
 
     if (!rtMatches) throw new ForbiddenException('Access Denied.');
 
-    const tokens = await this.getTokens(user._id, user.email);
+    const tokens = await this.getTokens(user);
 
     const rtHash = await this.hashPassword(tokens.refresh_token);
 
@@ -54,11 +55,10 @@ export class AuthService {
   }
 
   //Registro de usuario
-  async register(dto: CreateUserDto): Promise<Tokens> {
-    dto.password = await this.hashPassword(dto.password);
+  async register(dto: AuthDto): Promise<Tokens> {
     const user: any = await this.userService.create(dto);
 
-    const tokens = await this.getTokens(user._id, user.email);
+    const tokens = await this.getTokens(user);
 
     const rtHash = await this.hashPassword(tokens.refresh_token);
 
@@ -66,13 +66,22 @@ export class AuthService {
     return tokens;
   }
 
+  async getProfile(id: string) {
+    const user = await this.userService.findById(id);
+
+    user.password = null;
+    user.hashdRt = null;
+
+    return user;
+  }
+
   //Generar tokens de acceso y de refrescar.
-  async getTokens(userId: string, email: string) {
+  async getTokens(user: any) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: userId,
-          email,
+          sub: user._id,
+          email: user.email,
         },
         {
           secret: 'at-secret',
@@ -81,8 +90,8 @@ export class AuthService {
       ),
       this.jwtService.signAsync(
         {
-          sub: userId,
-          email,
+          sub: user._id,
+          email: user.email,
         },
         {
           secret: 'rt-secret',

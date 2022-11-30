@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
-import { AuthDto, CreateUserDto } from './../dto';
+
 import { Tokens } from './../types';
 import { RtGuard } from './../common/guards';
 import {
@@ -18,6 +18,7 @@ import {
   GetCurrentUser,
   Public,
 } from './../common/decorators';
+import { AuthDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,9 +32,9 @@ export class AuthController {
   }
 
   @Public()
-  @Get('/register')
+  @Post('/register')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() dto: CreateUserDto): Promise<Tokens> {
+  async register(@Body() dto: AuthDto): Promise<Tokens> {
     return await this.authService.register(dto);
   }
 
@@ -52,5 +53,10 @@ export class AuthController {
     @GetCurrentUserId() userId: string,
   ) {
     return await this.authService.refreshTokens(userId, refreshToken);
+  }
+
+  @Get('profile')
+  async profile(@GetCurrentUserId() userId: string) {
+    return await this.authService.getProfile(userId);
   }
 }
