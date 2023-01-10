@@ -14,7 +14,7 @@ export class Inventory {
   @Prop()
   lote: string;
 
-  @Prop()
+  @Prop({default: 0})
   stock_actual: number;
 
   @Prop()
@@ -30,9 +30,9 @@ export class Inventory {
   precio_salida: number;
 
   @Prop()
-  fecha_expiracion: string;
+  fecha_expiracion: Date;
 
-  @Prop()
+  @Prop({default: 0})
   importe: number; // se calcula el costo unitario por el stock actual
 
   @Prop()

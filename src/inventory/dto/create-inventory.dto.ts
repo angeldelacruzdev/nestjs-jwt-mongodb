@@ -1,5 +1,6 @@
 import {
   IsDate,
+  IsDecimal,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -16,32 +17,32 @@ export class CreateInventoryDto {
   descripcion: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   lote: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   stock_actual: number;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   entradas: number;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   salidas: number;
 
-  @IsNumber()
+ 
   @IsNotEmpty()
   precio_entrada: number;
 
-  @IsNumber()
+ 
   @IsNotEmpty()
   precio_salida: number;
 
   @IsString()
   @IsNotEmpty()
-  fecha_expiracion: string;
+  fecha_expiracion: Date;
 
   @IsOptional()
   importe: number;

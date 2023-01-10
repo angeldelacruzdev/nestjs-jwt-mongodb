@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateEntryDto } from './dto/create-entry.dto';
 import { UpdateEntryDto } from './dto/update-entry.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -40,8 +40,33 @@ export class EntriesService {
     return createdEntry.save();
   }
 
-  async findAll() {
-    return await this.entryModel.find({});
+  async findAll(q: string) {
+    let filters: mongoose.FilterQuery<EntryDocument> = {
+      $or: [
+        { no_factura_compra: new RegExp(q, 'i') },
+        { descripcion: new RegExp(q, 'i') },
+        { codigo_producto: new RegExp(q, 'i') },
+        { lote: new RegExp(q, 'i') },
+      ],
+    };
+
+    if (!q) {
+      filters = {};
+    }
+
+    let result = await this.entryModel.find(filters).sort({ createdAt: -1 });
+
+    return result;
+  }
+
+  async findEntryByProductCode(q: string) {
+    let filters: mongoose.FilterQuery<EntryDocument> = {
+      $or: [{ codigo_producto: new RegExp(q, 'i') }],
+    };
+
+    let result = await this.entryModel.find(filters);
+
+    return result;
   }
 
   async findOne(id: string) {
@@ -58,6 +83,7 @@ export class EntriesService {
   }
 
   async remove(id: string) {
+
     return await this.entryModel.deleteMany({ _id: id });
   }
 }

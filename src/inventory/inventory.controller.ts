@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  Put,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
@@ -21,8 +23,8 @@ export class InventoryController {
   }
 
   @Get()
-  async findAll() {
-    return await this.inventoryService.findAll();
+  async findAll(@Query() query: { q: string }) {
+    return await this.inventoryService.findAll(query.q);
   }
 
   @Get(':id')
@@ -30,7 +32,7 @@ export class InventoryController {
     return await this.inventoryService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateInventoryDto: UpdateInventoryDto,

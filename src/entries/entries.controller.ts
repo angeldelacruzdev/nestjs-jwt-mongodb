@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { EntriesService } from './entries.service';
 import { CreateEntryDto } from './dto/create-entry.dto';
@@ -21,8 +22,13 @@ export class EntriesController {
   }
 
   @Get()
-  findAll() {
-    return this.entriesService.findAll();
+  findAll(@Query() query: { q: string }) {
+    return this.entriesService.findAll(query.q);
+  }
+
+  @Get('code')
+  findEntryByProductCode(@Query() query: { c: string }) {
+    return this.entriesService.findAll(query.c);
   }
 
   @Get(':id')

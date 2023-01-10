@@ -28,6 +28,7 @@ export class AuthService {
     const rtHash = await this.hashPassword(tokens.refresh_token);
 
     await this.userService.updateOne(user._id, { hashdRt: rtHash });
+
     return tokens;
   }
 

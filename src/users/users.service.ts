@@ -15,8 +15,8 @@ export class UsersService {
     return createdUser;
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.findAll();
+  async findAll(q: any): Promise<User[]> {
+    return await this.userRepository.findAll(q);
   }
 
   async findUserByEmail(email: string): Promise<User> {

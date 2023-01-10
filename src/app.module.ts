@@ -14,6 +14,7 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { AccountsReceivableModule } from './accounts-receivable/accounts-receivable.module';
 import { ContributionsModule } from './contributions/contributions.module';
 import { AccountsPayableModule } from './accounts-payable/accounts-payable.module';
+import { RolesModule } from './roles/roles.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +32,7 @@ import { AccountsPayableModule } from './accounts-payable/accounts-payable.modul
     AccountsReceivableModule,
     ContributionsModule,
     AccountsPayableModule,
+    RolesModule,
   ],
   providers: [
     {

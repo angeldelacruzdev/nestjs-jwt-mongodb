@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
@@ -21,8 +21,21 @@ export class InventoryService {
     return createdInventory.save();
   }
 
-  async findAll() {
-    return await this.inventoryModel.find({});
+  async findAll(q) {
+    let filters: mongoose.FilterQuery<InventoryDocument> = {
+      $or: [
+        { descripcion: new RegExp(q, 'i') },
+        { codigo_producto: new RegExp(q, 'i') },
+        { lote: new RegExp(q, 'i') },
+      ],
+    };
+
+    if (!q) {
+      filters = {};
+    }
+    let result = await this.inventoryModel.find(filters).sort({ createdAt: -1 });
+
+    return result;
   }
 
   async findOne(id: string) {

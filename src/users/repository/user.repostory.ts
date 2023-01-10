@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 
 @Injectable()
@@ -12,8 +12,21 @@ export class UserRepository {
     return createdUser.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  async findAll(query: { q: string }): Promise<User[]> {
+    let filters: mongoose.FilterQuery<UserDocument> = {
+      $or: [
+        { full_name: new RegExp(query.q, 'i') },
+        { email: new RegExp(query.q, 'i') },
+      ],
+    };
+
+    if (!query.q) {
+      filters = {};
+    }
+
+    let result = await this.userModel.find(filters).sort({ createdAt: -1 })
+
+    return result
   }
 
   async findUserByEmail(email: string): Promise<User> {

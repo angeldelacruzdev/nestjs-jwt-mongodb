@@ -7,7 +7,16 @@ import { Request } from 'express';
 export class RtStrategiest extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request) => {
+          let data = request?.cookies['RT'];
+          if (!data) {
+            return null;
+          }
+
+          return data;
+        },
+      ]),
       secretOrKey: 'rt-secret',
       passReqToCallback: true,
     });

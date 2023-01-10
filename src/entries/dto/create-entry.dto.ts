@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDecimal, IsNumber, IsOptional, IsString, isDecimal } from 'class-validator';
 
 export class CreateEntryDto {
   @IsString()
@@ -19,7 +19,7 @@ export class CreateEntryDto {
   @IsNumber()
   cantidad: number;
 
-  @IsNumber()
+  @IsDecimal()
   precio: number;
 
   @IsString()

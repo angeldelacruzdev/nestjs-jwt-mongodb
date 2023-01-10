@@ -1,6 +1,3 @@
-import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
 import {
   Body,
   Controller,
@@ -10,6 +7,12 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+
+import { AuthDto } from './../auth/dto/auth.dto';
+import { UsersService } from './users.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { Query } from '@nestjs/common/decorators';
 
 @Controller({
   path: 'users',
@@ -23,9 +26,14 @@ export class UsersController {
     return await this.usersService.create(createUserDto);
   }
 
+  @Post('data/admin')
+  async createAdmin(@Body() createUserDto: AuthDto) {
+    return await this.usersService.create(createUserDto);
+  }
+
   @Get()
-  async findAll() {
-    return await this.usersService.findAll();
+  async findAll(@Query() q: string) {
+    return await this.usersService.findAll(q);
   }
 
   @Get(':id')
